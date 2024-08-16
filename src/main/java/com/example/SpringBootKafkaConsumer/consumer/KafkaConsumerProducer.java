@@ -1,8 +1,8 @@
 package com.example.SpringBootKafkaConsumer.consumer;
 
 
-import com.example.SpringBootKafkaConsumer.model.Toy;
-import com.example.SpringBootKafkaConsumer.model.User;
+import com.ingka.spe.model.icart.Toy;
+import com.ingka.spe.model.icart.User;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -45,7 +45,6 @@ public class KafkaConsumerProducer {
         kafkaStringTemplate.send(topicSend, UUID.randomUUID().toString(), input);
 
     }
-	/*
 	@SneakyThrows
 	@KafkaListener(
             topicPartitions = @TopicPartition(topic = "${kafka.topic.receive}",
@@ -70,7 +69,7 @@ public class KafkaConsumerProducer {
         toy.setToyName(toy.getToyName().toUpperCase());
         toy.setToyType(toy.getToyType().toUpperCase());
         kafkaToyTemplate.send(topicSend, UUID.randomUUID().toString(), toy);
-    }*/
+    }
 
 
 }

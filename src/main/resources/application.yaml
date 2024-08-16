@@ -4,9 +4,9 @@ server:
 spring: 
   application:
     name: SpringBootKafkaConsumer
-  
+
 kafka:
   topic:
-    send: topic-03
-    receive: topic-02
+    send: topic-30
+    receive: topic-20
 

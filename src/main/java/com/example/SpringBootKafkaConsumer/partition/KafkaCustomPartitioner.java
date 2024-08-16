@@ -1,8 +1,6 @@
 package com.example.SpringBootKafkaConsumer.partition;
 
 
-import com.example.SpringBootKafkaConsumer.model.Toy;
-import com.example.SpringBootKafkaConsumer.model.User;
 import org.apache.kafka.clients.producer.Partitioner;
 import org.apache.kafka.common.Cluster;
 
@@ -15,9 +13,9 @@ public class KafkaCustomPartitioner implements Partitioner {
 
         if (value instanceof String) {
             return 0;
-        } else if (value instanceof User) {
+        } else if (value instanceof com.ingka.spe.model.icart.User) {
             return 1;
-        } else if (value instanceof Toy) {
+        } else if (value instanceof com.ingka.spe.model.icart.Toy) {
             return 2;
         } else {
             return 0;

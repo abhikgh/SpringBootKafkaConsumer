@@ -1,9 +1,9 @@
 package com.example.SpringBootKafkaConsumer.config;
 
 
-import com.example.SpringBootKafkaConsumer.model.Toy;
-import com.example.SpringBootKafkaConsumer.model.User;
 import com.example.SpringBootKafkaConsumer.partition.KafkaCustomPartitioner;
+import com.ingka.spe.model.icart.Toy;
+import com.ingka.spe.model.icart.User;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
