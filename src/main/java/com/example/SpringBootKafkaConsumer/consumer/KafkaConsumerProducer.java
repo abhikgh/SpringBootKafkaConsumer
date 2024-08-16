@@ -45,7 +45,7 @@ public class KafkaConsumerProducer {
         kafkaStringTemplate.send(topicSend, UUID.randomUUID().toString(), input);
 
     }
-	
+	/*
 	@SneakyThrows
 	@KafkaListener(
             topicPartitions = @TopicPartition(topic = "${kafka.topic.receive}",
@@ -70,7 +70,7 @@ public class KafkaConsumerProducer {
         toy.setToyName(toy.getToyName().toUpperCase());
         toy.setToyType(toy.getToyType().toUpperCase());
         kafkaToyTemplate.send(topicSend, UUID.randomUUID().toString(), toy);
-    }
+    }*/
 
 
 }
