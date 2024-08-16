@@ -1,6 +1,7 @@
 package com.example.SpringBootKafkaConsumer.consumer;
 
 
+import com.ingka.spe.model.icart.OrderInput;
 import com.ingka.spe.model.icart.Toy;
 import com.ingka.spe.model.icart.User;
 import lombok.SneakyThrows;
@@ -14,6 +15,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 
+import java.util.Random;
 import java.util.UUID;
 
 @Service
@@ -29,6 +31,10 @@ public class KafkaConsumerProducer {
     @Autowired
     @Qualifier("kafkaToyTemplate")
     private KafkaTemplate<String, Toy> kafkaToyTemplate;
+
+    @Autowired
+    @Qualifier("kafkaOrderTemplate")
+    private KafkaTemplate<String, OrderInput> kafkaOrderTemplate;
 
     @Autowired
     @Qualifier("kafkaStringTemplate")
@@ -70,6 +76,21 @@ public class KafkaConsumerProducer {
         toy.setToyType(toy.getToyType().toUpperCase());
         kafkaToyTemplate.send(topicSend, UUID.randomUUID().toString(), toy);
     }
+
+    @SneakyThrows
+    @KafkaListener(
+            topicPartitions = @TopicPartition(topic = "${kafka.topic.receive}",
+                    partitionOffsets = @PartitionOffset(partition = "3" ,initialOffset = "0")),
+            containerFactory = "kafkaOrderListenerContainerFactory", groupId = "group1")
+    public void consumeOrder(@Payload OrderInput orderInput){
+            System.out.println("OrderInput received successfully");
+        orderInput.setStatus(orderInput.getStatus().concat("-").concat("CONSUMED"));
+        //int randomNum = rand.nextInt((max - min) + 1) + min;
+        int randomNum = new Random().nextInt((9000 - 1000) + 1) + 1000;
+        orderInput.setConsumerId(String.valueOf(randomNum));
+        kafkaOrderTemplate.send(topicSend, UUID.randomUUID().toString(), orderInput);
+    }
+
 
 
 }

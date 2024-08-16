@@ -1,6 +1,7 @@
 package com.example.SpringBootKafkaConsumer.config;
 
 import com.example.SpringBootKafkaConsumer.partition.KafkaCustomPartitioner;
+import com.ingka.spe.model.icart.OrderInput;
 import com.ingka.spe.model.icart.Toy;
 import com.ingka.spe.model.icart.User;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -59,6 +60,20 @@ public class KafkaConsumerConfig {
         map.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "127.0.0.1:9092");
         map.put(ProducerConfig.PARTITIONER_CLASS_CONFIG, KafkaCustomPartitioner.class);
         ConsumerFactory<String, String> consumerFactory = new DefaultKafkaConsumerFactory<>(map, new StringDeserializer(), new StringDeserializer());
+        concurrentKafkaListenerContainerFactory.setConsumerFactory(consumerFactory);
+        return concurrentKafkaListenerContainerFactory;
+    }
+
+    //JSON OrderInput Deserializer
+    @Bean(name = "kafkaOrderListenerContainerFactory")
+    public ConcurrentKafkaListenerContainerFactory<String, OrderInput> kafkaOrderListenerContainerFactory(){
+        ConcurrentKafkaListenerContainerFactory<String, OrderInput> concurrentKafkaListenerContainerFactory = new ConcurrentKafkaListenerContainerFactory<>();
+        JsonDeserializer<OrderInput> jsonDeserializer = new JsonDeserializer<>();
+        jsonDeserializer.addTrustedPackages("*");
+        Map<String, Object> map = new HashMap<>();
+        map.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "127.0.0.1:9092");
+        map.put(ProducerConfig.PARTITIONER_CLASS_CONFIG, KafkaCustomPartitioner.class);
+        ConsumerFactory<String, OrderInput> consumerFactory = new DefaultKafkaConsumerFactory<>(map, new StringDeserializer(), jsonDeserializer);
         concurrentKafkaListenerContainerFactory.setConsumerFactory(consumerFactory);
         return concurrentKafkaListenerContainerFactory;
     }

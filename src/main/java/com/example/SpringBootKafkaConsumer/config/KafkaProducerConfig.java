@@ -2,6 +2,7 @@ package com.example.SpringBootKafkaConsumer.config;
 
 
 import com.example.SpringBootKafkaConsumer.partition.KafkaCustomPartitioner;
+import com.ingka.spe.model.icart.OrderInput;
 import com.ingka.spe.model.icart.Toy;
 import com.ingka.spe.model.icart.User;
 import org.apache.kafka.clients.admin.NewTopic;
@@ -28,7 +29,7 @@ public class KafkaProducerConfig {
 
     @Bean
     public NewTopic newTopic(){
-        return new NewTopic(topicSend, 3, (short) 1);
+        return new NewTopic(topicSend, 4, (short) 1);
     }
 
 	@Bean(name = "kafkaUserTemplate")
@@ -61,6 +62,17 @@ public class KafkaProducerConfig {
 		map.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
 		map.put(ProducerConfig.PARTITIONER_CLASS_CONFIG, KafkaCustomPartitioner.class);
 		ProducerFactory<String, String> producerFactory = new DefaultKafkaProducerFactory<>(map);
+		return new KafkaTemplate<>(producerFactory);
+	}
+
+	@Bean(name = "kafkaOrderTemplate")
+	public KafkaTemplate<String, OrderInput> kafkaOrderTemplate(){
+		Map<String, Object> map = new HashMap<>();
+		map.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "127.0.0.1:9092");
+		map.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+		map.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+		map.put(ProducerConfig.PARTITIONER_CLASS_CONFIG, KafkaCustomPartitioner.class);
+		ProducerFactory<String, OrderInput> producerFactory = new DefaultKafkaProducerFactory<>(map);
 		return new KafkaTemplate<>(producerFactory);
 	}
 

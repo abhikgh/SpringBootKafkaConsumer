@@ -1,6 +1,9 @@
 package com.example.SpringBootKafkaConsumer.partition;
 
 
+import com.ingka.spe.model.icart.OrderInput;
+import com.ingka.spe.model.icart.Toy;
+import com.ingka.spe.model.icart.User;
 import org.apache.kafka.clients.producer.Partitioner;
 import org.apache.kafka.common.Cluster;
 
@@ -13,10 +16,12 @@ public class KafkaCustomPartitioner implements Partitioner {
 
         if (value instanceof String) {
             return 0;
-        } else if (value instanceof com.ingka.spe.model.icart.User) {
+        } else if (value instanceof User) {
             return 1;
-        } else if (value instanceof com.ingka.spe.model.icart.Toy) {
+        } else if (value instanceof Toy) {
             return 2;
+        } else if (value instanceof OrderInput) {
+            return 3;
         } else {
             return 0;
         }
