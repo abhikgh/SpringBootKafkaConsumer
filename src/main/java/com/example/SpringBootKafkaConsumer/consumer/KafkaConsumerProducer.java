@@ -88,6 +88,8 @@ public class KafkaConsumerProducer {
         //int randomNum = rand.nextInt((max - min) + 1) + min;
         int randomNum = new Random().nextInt((9000 - 1000) + 1) + 1000;
         orderInput.setConsumerId(String.valueOf(randomNum));
+        orderInput.setOrderDate("2023-02-12");
+        orderInput.setOrderStatus(100);
         kafkaOrderTemplate.send(topicSend, UUID.randomUUID().toString(), orderInput);
     }
 
