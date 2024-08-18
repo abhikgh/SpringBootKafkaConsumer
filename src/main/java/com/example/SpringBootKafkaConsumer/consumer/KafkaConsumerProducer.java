@@ -1,20 +1,29 @@
 package com.example.SpringBootKafkaConsumer.consumer;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ingka.spe.model.icart.OrderInput;
+import com.ingka.spe.model.icart.OrderOutput;
 import com.ingka.spe.model.icart.Toy;
 import com.ingka.spe.model.icart.User;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.annotation.PartitionOffset;
 import org.springframework.kafka.annotation.TopicPartition;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URI;
 import java.util.Random;
 import java.util.UUID;
 
@@ -39,6 +48,12 @@ public class KafkaConsumerProducer {
     @Autowired
     @Qualifier("kafkaStringTemplate")
     private KafkaTemplate<String, String> kafkaStringTemplate;
+
+    @Autowired
+    private RestTemplate restTemplate;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @SneakyThrows
     @KafkaListener(
@@ -91,6 +106,28 @@ public class KafkaConsumerProducer {
         orderInput.setOrderDate("2023-02-12");
         orderInput.setOrderStatus(100);
         kafkaOrderTemplate.send(topicSend, UUID.randomUUID().toString(), orderInput);
+
+        //call the updateOrder service
+        String endPoint = "http://localhost:9071/kafka/updateOrder";
+
+        URI uri = UriComponentsBuilder
+                .fromUriString(endPoint)
+                .build()
+                        .encode()
+                                .toUri();
+
+
+        String requestJson = objectMapper.writeValueAsString(orderInput);
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+        HttpEntity<String> httpEntity = new HttpEntity<>(requestJson, httpHeaders);
+
+        OrderOutput orderOutput = restTemplate.exchange(uri, HttpMethod.POST, httpEntity, OrderOutput.class).getBody();
+
+        System.out.println("----------OrderOutput details------------");
+        System.out.println(orderOutput.getOrderId()+"-"+orderOutput.isOrderStatus()+"-"+orderOutput.getConsumerId()+"-"+orderOutput.getOrderDate()+"-"+orderOutput.getStatus());
+
     }
 
 
