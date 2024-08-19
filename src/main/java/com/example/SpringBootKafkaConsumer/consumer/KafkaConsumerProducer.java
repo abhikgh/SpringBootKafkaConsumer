@@ -6,6 +6,9 @@ import com.ingka.spe.model.icart.OrderInput;
 import com.ingka.spe.model.icart.OrderOutput;
 import com.ingka.spe.model.icart.Toy;
 import com.ingka.spe.model.icart.User;
+import io.jaegertracing.internal.JaegerTracer;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.opentracing.Span;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -54,6 +57,12 @@ public class KafkaConsumerProducer {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private MeterRegistry meterRegistry;
+
+    @Autowired
+    private JaegerTracer jaegerTracer;
 
     @SneakyThrows
     @KafkaListener(
@@ -107,6 +116,8 @@ public class KafkaConsumerProducer {
         orderInput.setOrderStatus(100);
         kafkaOrderTemplate.send(topicSend, UUID.randomUUID().toString(), orderInput);
 
+        Span span = jaegerTracer.buildSpan("consumeOrder").start();
+
         //call the updateOrder service
         String endPoint = "http://localhost:9071/kafka/updateOrder";
 
@@ -127,6 +138,8 @@ public class KafkaConsumerProducer {
 
         System.out.println("----------OrderOutput details------------");
         System.out.println(orderOutput.getOrderId()+"-"+orderOutput.isOrderStatus()+"-"+orderOutput.getConsumerId()+"-"+orderOutput.getOrderDate()+"-"+orderOutput.getStatus());
+
+        span.finish();
 
     }
 
