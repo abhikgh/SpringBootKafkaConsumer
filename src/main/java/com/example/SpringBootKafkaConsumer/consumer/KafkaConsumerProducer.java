@@ -134,7 +134,9 @@ public class KafkaConsumerProducer {
         httpHeaders.set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
         HttpEntity<String> httpEntity = new HttpEntity<>(requestJson, httpHeaders);
 
+        Span spanConsumeOrder2 = jaegerTracer.buildSpan("consumeOrder2").asChildOf(span).start();
         OrderOutput orderOutput = restTemplate.exchange(uri, HttpMethod.POST, httpEntity, OrderOutput.class).getBody();
+        spanConsumeOrder2.finish();
 
         System.out.println("----------OrderOutput details------------");
         System.out.println(orderOutput.getOrderId()+"-"+orderOutput.isOrderStatus()+"-"+orderOutput.getConsumerId()+"-"+orderOutput.getOrderDate()+"-"+orderOutput.getStatus());
