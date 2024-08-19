@@ -10,3 +10,27 @@ kafka:
     send: topic-301
     receive: topic-201
 
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: ["health","prometheus","metrics","info"]
+  endpoint:
+    health:
+      show-details: always
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+  info:
+    java:
+      enabled: true
+    env:
+      enabled: true
+  tracing:
+    sampling:
+      probability: 1.0
+  otlp:
+    tracing:
+      endpoint: http://localhost:4318/v1/traces
